@@ -1,0 +1,67 @@
+<html>
+
+<head>
+    <title>Weather API</title>
+
+</head>
+
+<body>
+    Latitude:<input type="nummber" id="lat" onkeyup="state()">
+    Longitude:<input type="number" id="long" onkeyup="state()">
+    <button id="get" onclick="getdetail()">Get</button>
+    <button onclick="getcurrentdetails()">Current location</button>
+    <div id="result"></div>
+</body>
+<script>
+    let lat = document.querySelector("#lat");
+    let long = document.querySelector("#long");
+    let button = document.querySelector("#get");
+    button.disabled = true
+    state = () => {
+        if (lat.value && long.value) {
+            button.disabled = false
+        } else {
+            button.disabled = true
+        }
+    }
+    var l1;
+    var l2;
+    getdetail = () => {
+        latd = document.getElementById(lat)
+        longd = document.getElementById(long)
+        getapi(lat, long)
+
+
+    }
+    getcurrentdetails = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var lat1 = position.coords.latitude;
+                var long1 = position.coords.longitude;
+                getapi(lat1, long1)
+            })
+        }
+
+
+
+    }
+    getapi = (reslat, reslong) => {
+        fetch(`
+http://www.7timer.info/bin/astro.php?lon=${reslat}&lat=${reslong}&ac=0&unit=metric&output=json&tzshift=0`).then(
+            res => res.json()).then(resp => {
+            let result = '<table>';
+                for(let { wind10m } of resp.dataseries) {
+                result += `<tr>
+                                <td>${wind10m.direction}</td>
+                                <td>${wind10m.speed}</td>
+                                 </tr>`;
+                                }
+            result+='</table>';
+            console.log(result)
+    document.getElementById("result").innerHTML=result;
+
+        })
+    }
+</script>
+
+</html>
